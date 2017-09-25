@@ -1,8 +1,11 @@
 package edu.touro.cs.mco152;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 // imitation clock...pretends to behave like a clock
 class MockClock implements ElapsedTimeClockI{
@@ -20,16 +23,32 @@ class MockClock implements ElapsedTimeClockI{
 }
 
 public class TimerTest {
+    private Timer timer;
+    @BeforeEach
+    public void initEach(){
+        ElapsedTimeClockI clock = new MockClock(13, 1016, -1);
+        timer = new Timer( clock );
+    }
+    @Test
+    void getElapsedTimeWhenStartStopShouldBeTimeInterval() {
+        timer.start();
+        timer.stop();
+
+        assertEquals(1003, timer.getElapsedTime());
+    }
 
     @Test
-    void getElapsedTimeWhenStartStopShouldBe1003() {
-        ElapsedTimeClockI clock = new MockClock(13, 1016, -1);
-        Timer t = new Timer( clock );
-
-        t.start();
-        t.stop();
-
-        assertEquals(1003, t.getElapsedTime());
+    void stopBeforeStartSHouldThrowInvalidStateException(){
+        try{
+            timer.stop();
+            fail("No exception thrown");
+        }
+        catch(IllegalStateException ise){
+        }
     }
+
+
+
+
 
 }
